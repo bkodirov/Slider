@@ -1,7 +1,6 @@
 package com.crispkeys.imageviewtest;
 
-import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,9 +8,10 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Property;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -22,14 +22,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class AnimatedView extends FrameLayout {
 
-    private static final float MAX_ANIMATION_DURATION = 1000;
-    private static final float MIN_ANIMATION_DURATION = 100;
-
+    private static final long MAX_ANIMATION_DURATION = 1000;
+    private static final long MIN_ANIMATION_DURATION = 100;
     private static final long MIN_HOLD_DURATION = 2000;
+    private long mDuration = MIN_ANIMATION_DURATION;
     private long mHoldDuration = 2000;
     //Timer
     private ScheduledExecutorService mScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture mScheduledFuture;
+
     //Current page index
     private int currentPageIndex;
 
@@ -37,20 +38,9 @@ public class AnimatedView extends FrameLayout {
     private View currentView;
     private View nextView;
 
+    //Animation Queue
+    private Queue<OnViewOutingAnimation> mAnimationQueue = new LinkedList<>();
     private BaseAdapter mAdapter;
-
-    private Property<TransitionAnimationHolder, Float> mProperty =new Property<TransitionAnimationHolder, Float>(Float.class,
-        "viewOuting animation") {
-            @Override
-            public Float get(TransitionAnimationHolder animationHolder) {
-                return null;
-            }
-
-        @Override
-        public void set(TransitionAnimationHolder object, Float value) {
-            object.getOutingAnimation().onViewOuting(object.getBitmap(), value);
-        }
-    };
 
     public AnimatedView(Context context) {
         super(context);
@@ -79,6 +69,14 @@ public class AnimatedView extends FrameLayout {
     public void setAdapter(BaseAdapter adapter) {
         this.mAdapter = adapter;
         init();
+    }
+
+    public void setAnimationDuration(long duration) {
+        if (duration < MIN_ANIMATION_DURATION || duration > MAX_ANIMATION_DURATION) {
+            throw new IllegalArgumentException("Wrong animation duration argument. Duration must be within " +
+                MIN_ANIMATION_DURATION + "-" + MAX_ANIMATION_DURATION);
+        }
+        mDuration = duration;
     }
 
     private void init() {
@@ -133,9 +131,20 @@ public class AnimatedView extends FrameLayout {
 
             previousView.setDrawingCacheEnabled(true);
             previousView.buildDrawingCache();
-            Bitmap bm = previousView.getDrawingCache();
+            final Bitmap bm = previousView.getDrawingCache();
 
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat
+            final OnViewOutingAnimation onViewOutingAnimation = mAnimationQueue.poll();
+            mAnimationQueue.offer(onViewOutingAnimation);
+
+            ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Float value = (Float) animation.getAnimatedValue();
+                    onViewOutingAnimation.onViewOuting(bm, value);
+                }
+            });
+            valueAnimator.start();
         }
     }
 }
