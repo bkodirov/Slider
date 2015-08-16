@@ -1,4 +1,4 @@
-package com.crispkeys.imageviewtest;
+package com.crispkeys.slider;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

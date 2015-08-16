@@ -1,4 +1,4 @@
-package com.crispkeys.imageviewtest;
+package com.crispkeys.slider;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -10,8 +10,6 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -39,7 +37,8 @@ public class AnimatedView extends FrameLayout {
     private View nextView;
 
     //Animation Queue
-    private Queue<OnViewOutingAnimation> mAnimationQueue = new LinkedList<>();
+    private AbstractAnimationQueue<OnViewOutingAnimation> mAnimationQueue = new RandomAnimationQueue();
+
     private BaseAdapter mAdapter;
 
     public AnimatedView(Context context) {
@@ -86,6 +85,9 @@ public class AnimatedView extends FrameLayout {
     }
 
     public void setViewHangingPeriod(long hangingPeriod) {
+        if(hangingPeriod> MIN_HOLD_DURATION){
+            throw new IllegalArgumentException("View hanging period must not be less then - " + MIN_HOLD_DURATION);
+        }
         if (mScheduledFuture != null) {
             throw new IllegalStateException("You have to set hanging period before setting adapter");
         }
@@ -133,15 +135,24 @@ public class AnimatedView extends FrameLayout {
             previousView.buildDrawingCache();
             final Bitmap bm = previousView.getDrawingCache();
 
-            final OnViewOutingAnimation onViewOutingAnimation = mAnimationQueue.poll();
-            mAnimationQueue.offer(onViewOutingAnimation);
+            Class<OnViewOutingAnimation> nextAnimation = mAnimationQueue.getNextAnimation();
+
+            OnViewOutingAnimation onViewOutingAnimation = null;
+            try {
+                onViewOutingAnimation = nextAnimation.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
 
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
+            final OnViewOutingAnimation finalOnViewOutingAnimation = onViewOutingAnimation;
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     Float value = (Float) animation.getAnimatedValue();
-                    onViewOutingAnimation.onViewOuting(bm, value);
+                    finalOnViewOutingAnimation.onViewOuting(bm, value);
                 }
             });
             valueAnimator.start();
