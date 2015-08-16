@@ -1,4 +1,4 @@
-package com.crispkeys.imageviewtest;
+package com.crispkeys.slider;
 
 import android.graphics.Bitmap;
 
