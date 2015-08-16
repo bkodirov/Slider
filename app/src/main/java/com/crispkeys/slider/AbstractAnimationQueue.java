@@ -16,6 +16,7 @@ public abstract class AbstractAnimationQueue<T extends OnViewOutingAnimation> {
     public abstract void addAnimation(Class<? extends T> t);
 
     public boolean addAll(Collection<? extends Class<? extends T>> collection) {
+
         return mAnimationQueue.addAll(collection);
     }
 

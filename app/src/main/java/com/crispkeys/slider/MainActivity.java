@@ -1,19 +1,20 @@
 package com.crispkeys.slider;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ListView listView = null;
-        listView.setAdapter();
+        AnimatedView animatedView = new AnimatedView(this);
+
+        animatedView.setAdapter();
+
+        setContentView(animatedView);
     }
 
     @Override
@@ -36,5 +37,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    class Adapter  extends BaseAdapter{
+
     }
 }

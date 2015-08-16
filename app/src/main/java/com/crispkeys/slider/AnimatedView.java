@@ -5,8 +5,6 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -59,13 +57,6 @@ public class AnimatedView extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        Matrix matrix = new Matrix();
-
-        super.dispatchDraw(canvas);
-    }
-
     public void setAdapter(BaseAdapter adapter) {
         this.mAdapter = adapter;
         init();
@@ -81,8 +72,15 @@ public class AnimatedView extends FrameLayout {
 
     private void init() {
         checkAdapter();
-        mScheduledFuture = mScheduledExecutorService.scheduleAtFixedRate(new ViewChangerRunnable(), 0, mHoldDuration,
-            TimeUnit.MILLISECONDS);
+        currentView = mAdapter.getView(getCurrentPageIndex());
+        previousView = mAdapter.getView(getPreviousPageIndex());
+        nextView = mAdapter.getView(getNextPageIndex());
+
+        addView(nextView);
+        addView(currentView);
+        mScheduledFuture =
+            mScheduledExecutorService.scheduleAtFixedRate(new ViewChangerRunnable(), mHoldDuration, mHoldDuration,
+                TimeUnit.MILLISECONDS);
     }
 
     public void setViewHangingPeriod(long hangingPeriod) {
@@ -128,13 +126,9 @@ public class AnimatedView extends FrameLayout {
         public void run() {
             checkAdapter();
 
-            previousView = currentView;
-            currentView = nextView;
-            nextView = mAdapter.getView(getCurrentPageIndex());
-
-            previousView.setDrawingCacheEnabled(true);
-            previousView.buildDrawingCache();
-            final Bitmap bm = previousView.getDrawingCache();
+            currentView.setDrawingCacheEnabled(true);
+            currentView.buildDrawingCache();
+            final Bitmap bm = currentView.getDrawingCache();
 
             Class<? extends OnViewOutingAnimation> nextAnimation = mAnimationQueue.getNextAnimation();
 
@@ -155,6 +149,7 @@ public class AnimatedView extends FrameLayout {
                     if (finalOnViewOutingAnimation != null) {
                         Float value = (Float) animation.getAnimatedValue();
                         finalOnViewOutingAnimation.onViewOuting(bm, value);
+                        invalidate();
                     }
                 }
             });
@@ -166,7 +161,9 @@ public class AnimatedView extends FrameLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-
+                    previousView = currentView;
+                    currentView = nextView;
+                    nextView = mAdapter.getView(getCurrentPageIndex());
                 }
 
                 @Override
