@@ -129,7 +129,7 @@ public class AnimatedView extends FrameLayout {
             currentView.setDrawingCacheEnabled(true);
             currentView.buildDrawingCache();
             final Bitmap bm = currentView.getDrawingCache();
-
+            
             Class<? extends OnViewOutingAnimation> nextAnimation = mAnimationQueue.getNextAnimation();
 
             OnViewOutingAnimation onViewOutingAnimation = null;
