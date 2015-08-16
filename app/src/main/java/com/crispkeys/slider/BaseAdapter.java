@@ -7,5 +7,5 @@ import android.view.View;
  */
 public abstract class BaseAdapter<V extends View> {
     abstract int getCount();
-    abstract V getView(int id);
+    abstract V getView(int position);
 }

@@ -1,9 +1,15 @@
 package com.crispkeys.slider;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -12,7 +18,13 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         AnimatedView animatedView = new AnimatedView(this);
 
-        animatedView.setAdapter();
+        List<Integer> resId = new ArrayList<Integer>(){
+            {
+                add(R.drawable.cheese_1);
+                add(R.drawable.cheese_4);
+            }
+        };
+        animatedView.setAdapter(new Adapter(this, resId));
 
         setContentView(animatedView);
     }
@@ -41,5 +53,26 @@ public class MainActivity extends ActionBarActivity {
 
     class Adapter  extends BaseAdapter{
 
+        private final Context mContext;
+        private final List<Integer> mResList;
+
+        public Adapter(Context context, List<Integer> resList) {
+            mContext = context;
+            mResList = resList;
+        }
+
+        @Override
+        int getCount() {
+            return mResList.size();
+        }
+
+        @Override
+        View getView(int position) {
+            int resId = mResList.get(position);
+            View root = LayoutInflater.from(mContext).inflate(R.layout.row_animated_view, null);
+            ImageView imageView = (ImageView) root.findViewById(R.id.imageView);
+            imageView.setImageResource(resId);
+            return root;
+        }
     }
 }

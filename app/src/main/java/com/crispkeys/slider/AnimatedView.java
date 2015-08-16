@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import java.util.concurrent.Executors;
@@ -79,7 +80,7 @@ public class AnimatedView extends FrameLayout {
         addView(nextView);
         addView(currentView);
         mScheduledFuture =
-            mScheduledExecutorService.scheduleAtFixedRate(new ViewChangerRunnable(), mHoldDuration, mHoldDuration,
+            mScheduledExecutorService.scheduleAtFixedRate(ticker, 0, mHoldDuration,
                 TimeUnit.MILLISECONDS);
     }
 
@@ -120,63 +121,68 @@ public class AnimatedView extends FrameLayout {
         }
     }
 
-    private class ViewChangerRunnable implements Runnable {
+    private Runnable ticker = new Runnable() {
 
         @Override
         public void run() {
             checkAdapter();
-
-            currentView.setDrawingCacheEnabled(true);
-            currentView.buildDrawingCache();
-            final Bitmap bm = currentView.getDrawingCache();
-            
-            Class<? extends OnViewOutingAnimation> nextAnimation = mAnimationQueue.getNextAnimation();
-
-            OnViewOutingAnimation onViewOutingAnimation = null;
+            Log.d("myLogs", "Runnable!");
             try {
+                currentView.setDrawingCacheEnabled(true);
+                currentView.buildDrawingCache();
+                final Bitmap bm = currentView.getDrawingCache();
+
+                Class<? extends OnViewOutingAnimation> nextAnimation = mAnimationQueue.getNextAnimation();
+
+                OnViewOutingAnimation onViewOutingAnimation = null;
+
                 onViewOutingAnimation = nextAnimation.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
 
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
-            final OnViewOutingAnimation finalOnViewOutingAnimation = onViewOutingAnimation;
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    if (finalOnViewOutingAnimation != null) {
-                        Float value = (Float) animation.getAnimatedValue();
-                        finalOnViewOutingAnimation.onViewOuting(bm, value);
-                        invalidate();
+                ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
+                final OnViewOutingAnimation finalOnViewOutingAnimation = onViewOutingAnimation;
+                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (finalOnViewOutingAnimation != null) {
+                            Float value = (Float) animation.getAnimatedValue();
+                            finalOnViewOutingAnimation.onViewOuting(bm, value);
+                            invalidate();
+                        }
                     }
-                }
-            });
-            valueAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
+                });
+                valueAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
 
-                }
+                    }
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    previousView = currentView;
-                    currentView = nextView;
-                    nextView = mAdapter.getView(getCurrentPageIndex());
-                }
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        removeView(currentView);
 
-                @Override
-                public void onAnimationCancel(Animator animation) {
+                        previousView = currentView;
+                        currentView = nextView;
+                        nextView = mAdapter.getView(getCurrentPageIndex());
 
-                }
+                        addView(nextView, 1);
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animator animation) {
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
 
-                }
-            });
-            valueAnimator.start();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                valueAnimator.start();
+            } catch (InstantiationException e) {
+                Log.getStackTraceString(e);
+            } catch (IllegalAccessException e) {
+                Log.getStackTraceString(e);
+            }
         }
-    }
+    };
 }
