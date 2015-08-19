@@ -9,7 +9,7 @@ import com.crispkeys.slider.OnViewOutingAnimationListener;
 public class RandomSquareEffectAnimationListener implements OnViewOutingAnimationListener {
 
     @Override
-    public void onViewOuting(Canvas canvas, float value) {
-
+    public boolean onViewOuting(Canvas canvas, float value) {
+        return false;
     }
 }

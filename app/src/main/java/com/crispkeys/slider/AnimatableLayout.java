@@ -126,7 +126,10 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
             throw new IllegalStateException("You have to call init() at first in order to use this view");
         }
 
-        onViewOutingAnimationListener.onViewOuting(canvas, mAnimationValue);
+        boolean isAnimating = onViewOutingAnimationListener.onViewOuting(canvas, mAnimationValue);
+        if(!isAnimating){
+            super.dispatchDraw(canvas);
+        }
 
         //int delta;
         //if (mDoorType == VERTICAL_DOOR) {
