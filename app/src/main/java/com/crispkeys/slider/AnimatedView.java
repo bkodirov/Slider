@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
+import timber.log.Timber;
 
 /**
  * Created by Behzodbek Qodirov on 8/15/15.
@@ -68,7 +69,7 @@ public class AnimatedView extends FrameLayout {
                         try {
                             nextViewAnimationListener = mAnimationQueue.getNextAnimation().newInstance();
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Timber.e(Log.getStackTraceString(e));
                         }
 
                         nextView = AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView
@@ -76,6 +77,7 @@ public class AnimatedView extends FrameLayout {
 
                         addView(nextView, 1);
                         invalidate();
+                        Timber.d("Child size: "+getChildCount());
                     }
 
                     @Override
@@ -159,7 +161,6 @@ public class AnimatedView extends FrameLayout {
     }
 
     private int getNextPageIndex() {
-        Log.d("myLogs", "getNextPageIndex");
         checkAdapter();
         if (currentPageIndex == mAdapter.getCount()-1) {
             currentPageIndex = 0;
