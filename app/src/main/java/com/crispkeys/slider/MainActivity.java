@@ -3,6 +3,7 @@ package com.crispkeys.slider;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         View getView(int position) {
             int resId = mResList.get(position);
+            Log.d("myLogs", "resId: "+resId);
             View root = LayoutInflater.from(mContext).inflate(R.layout.row_animated_view, null);
             ImageView imageView = (ImageView) root.findViewById(R.id.imageView);
             imageView.setImageResource(resId);

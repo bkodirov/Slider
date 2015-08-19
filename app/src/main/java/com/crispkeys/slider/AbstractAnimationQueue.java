@@ -7,7 +7,7 @@ import java.util.Queue;
 /**
  * Created by Behzodbek Qodirov on 8/16/15.
  */
-public abstract class AbstractAnimationQueue<T extends OnViewOutingAnimation> {
+public abstract class AbstractAnimationQueue<T extends OnViewOutingAnimationListener> {
 
     private Queue<Class<? extends T>> mAnimationQueue = new LinkedList<>();
 

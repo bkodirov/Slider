@@ -1,28 +1,28 @@
 package com.crispkeys.slider;
 
-import com.crispkeys.slider.animations.RandomSquareEffectAnimation;
+import com.crispkeys.slider.animations.RandomSquareEffectAnimationListener;
 import java.util.Queue;
 
 /**
  * Created by Behzodbek Qodirov on 8/16/15.
  */
-public class RandomAnimationQueue extends AbstractAnimationQueue<OnViewOutingAnimation> {
+public class RandomAnimationQueue extends AbstractAnimationQueue<OnViewOutingAnimationListener> {
 
     public RandomAnimationQueue() {
-        OnViewOutingAnimation randomAnimation = new RandomSquareEffectAnimation();
-        addAnimation(RandomSquareEffectAnimation.class);
+        OnViewOutingAnimationListener randomAnimation = new RandomSquareEffectAnimationListener();
+        addAnimation(RandomSquareEffectAnimationListener.class);
     }
 
     @Override
-    public Class<? extends OnViewOutingAnimation> getNextAnimation() {
-        Queue<Class<? extends OnViewOutingAnimation>> queue = getAnimationQueue();
-        Class<? extends OnViewOutingAnimation> poll = queue.poll();
+    public Class<? extends OnViewOutingAnimationListener> getNextAnimation() {
+        Queue<Class<? extends OnViewOutingAnimationListener>> queue = getAnimationQueue();
+        Class<? extends OnViewOutingAnimationListener> poll = queue.poll();
         queue.offer(poll);
         return poll;
     }
 
     @Override
-    public void addAnimation(Class<? extends OnViewOutingAnimation> t) {
+    public void addAnimation(Class<? extends OnViewOutingAnimationListener> t) {
         getAnimationQueue().offer(t);
     }
 
