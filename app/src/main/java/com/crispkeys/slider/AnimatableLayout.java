@@ -126,11 +126,8 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
             throw new IllegalStateException("You have to call init() at first in order to use this view");
         }
 
-        boolean isAnimating = onViewOutingAnimationListener.onViewOuting(canvas, mAnimationValue);
-        if(!isAnimating){
-            super.dispatchDraw(canvas);
-        }
-
+        onViewOutingAnimationListener.onViewOuting(canvas, mAnimationValue);
+        //Timber.d("Get measured ... hieght = %d, width = %d", getMeasuredHeight(), getMeasuredWidth());
         //int delta;
         //if (mDoorType == VERTICAL_DOOR) {
         //    delta = (int) ((mOriginalHeight / 2) * mProgress);
@@ -167,6 +164,7 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         //    super.dispatchDraw(canvas);
         //}
         //canvas.restore();
+        super.dispatchDraw(canvas);
     }
 
     @Override

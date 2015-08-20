@@ -16,11 +16,11 @@ import timber.log.Timber;
  */
 public class AnimatedView extends FrameLayout {
 
-    private static final long MAX_ANIMATION_DURATION = 1000;
-    private static final long MIN_ANIMATION_DURATION = 100;
-    private static final long MIN_HOLD_DURATION = 2000;
+    private static final long MAX_ANIMATION_DURATION = 2000;
+    private static final long MIN_ANIMATION_DURATION = 500;
+    private static final long MIN_HOLD_DURATION = 4000;
     private long mDuration = MIN_ANIMATION_DURATION;
-    private long mHoldDuration = 2000;
+    private long mHoldDuration = MIN_HOLD_DURATION;
     //Timer
     private Handler mHandler = new Handler();
 
@@ -49,12 +49,13 @@ public class AnimatedView extends FrameLayout {
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                      currentView.onAnimationUpdate(animation);
+                        currentView.onAnimationUpdate(animation);
                     }
                 });
                 valueAnimator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
+                        addView(nextView, 1);
                     }
 
                     @Override
@@ -64,7 +65,7 @@ public class AnimatedView extends FrameLayout {
                         previousView = currentView;
                         currentView = nextView;
 
-
+                        //Prepare next view after animation end in order to prevent animation lagging
                         OnViewOutingAnimationListener nextViewAnimationListener = null;
                         try {
                             nextViewAnimationListener = mAnimationQueue.getNextAnimation().newInstance();
@@ -72,12 +73,11 @@ public class AnimatedView extends FrameLayout {
                             Timber.e(Log.getStackTraceString(e));
                         }
 
-                        nextView = AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView
-                            (getNextPageIndex()));
+                        nextView = AnimatableLayout.newInstance(getContext(), nextViewAnimationListener,
+                            mAdapter.getView(getNextPageIndex()));
 
-                        addView(nextView, 1);
                         invalidate();
-                        Timber.d("Child size: "+getChildCount());
+                        Timber.d("Child size: " + getChildCount());
                     }
 
                     @Override
@@ -138,12 +138,11 @@ public class AnimatedView extends FrameLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        currentView =AnimatableLayout.newInstance(getContext(), currentViewAnimationListener, mAdapter.getView
-            (getCurrentPageIndex()));
-        nextView = AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView
-                (getNextPageIndex()));
+        currentView = AnimatableLayout.newInstance(getContext(), currentViewAnimationListener,
+            mAdapter.getView(getCurrentPageIndex()));
+        nextView =
+            AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView(getNextPageIndex()));
 
-        addView(nextView);
         addView(currentView);
         mHandler.postDelayed(ticker, mHoldDuration);
     }
@@ -162,7 +161,7 @@ public class AnimatedView extends FrameLayout {
 
     private int getNextPageIndex() {
         checkAdapter();
-        if (currentPageIndex == mAdapter.getCount()-1) {
+        if (currentPageIndex == mAdapter.getCount() - 1) {
             currentPageIndex = 0;
             return currentPageIndex;
         }
@@ -172,10 +171,10 @@ public class AnimatedView extends FrameLayout {
     private int getPreviousPageIndex() {
         checkAdapter();
         if (currentPageIndex == 0) {
-            currentPageIndex  = mAdapter.getCount() - 1;
+            currentPageIndex = mAdapter.getCount() - 1;
             return currentPageIndex;
         }
-        currentPageIndex -=1;
+        currentPageIndex -= 1;
         return currentPageIndex;
     }
 
