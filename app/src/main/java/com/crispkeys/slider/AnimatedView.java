@@ -18,7 +18,7 @@ public class AnimatedView extends FrameLayout {
 
     private static final long MAX_ANIMATION_DURATION = 2000;
     private static final long MIN_ANIMATION_DURATION = 500;
-    private static final long MIN_HOLD_DURATION = 4000;
+    private static final long MIN_HOLD_DURATION = 3000;
     private long mDuration = MIN_ANIMATION_DURATION;
     private long mHoldDuration = MIN_HOLD_DURATION;
     //Timer
@@ -27,7 +27,6 @@ public class AnimatedView extends FrameLayout {
     //Current page index
     private int currentPageIndex;
 
-    private AnimatableLayout previousView;
     private AnimatableLayout currentView;
     private AnimatableLayout nextView;
 
@@ -49,7 +48,7 @@ public class AnimatedView extends FrameLayout {
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        currentView.onAnimationUpdate(animation);
+                        nextView.onAnimationUpdate(animation);
                     }
                 });
                 valueAnimator.addListener(new Animator.AnimatorListener() {
@@ -62,7 +61,6 @@ public class AnimatedView extends FrameLayout {
                     public void onAnimationEnd(Animator animation) {
                         removeView(currentView);
 
-                        previousView = currentView;
                         currentView = nextView;
 
                         //Prepare next view after animation end in order to prevent animation lagging
@@ -143,8 +141,9 @@ public class AnimatedView extends FrameLayout {
         nextView =
             AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView(getNextPageIndex()));
 
+        currentView.setAnimationValue(1);
         addView(currentView);
-        mHandler.postDelayed(ticker, mHoldDuration);
+        mHandler.postDelayed(ticker, MIN_HOLD_DURATION);
     }
 
     public void setViewHangingPeriod(long hangingPeriod) {

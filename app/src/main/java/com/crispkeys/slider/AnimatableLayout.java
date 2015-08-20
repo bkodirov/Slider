@@ -4,9 +4,12 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,9 +26,8 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     private int mDoorType;
 
-    private float mProgress;
-
     private Bitmap mFullBitmap;
+    private Canvas mFullCanvas;
     private OnViewOutingAnimationListener onViewOutingAnimationListener;
     private float mAnimationValue;
 
@@ -54,12 +56,12 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         mDoorType = doorType;
     }
 
-    public float getProgress() {
-        return mProgress;
+    public float getAnimationValue() {
+        return mAnimationValue;
     }
 
-    public void setProgress(float progress) {
-        mProgress = progress;
+    public void setAnimationValue(float animationValue) {
+        mAnimationValue = animationValue;
         invalidate();
     }
 
@@ -118,7 +120,12 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (isInEditMode() || mProgress >= 1f) {
+        Log.d("ANOMATION", "Valiue = " + mAnimationValue);
+
+        if (mAnimationValue <= 0)
+            return;
+
+        if (isInEditMode() || mAnimationValue >= 1f) {
             super.dispatchDraw(canvas);
             return;
         }
@@ -126,45 +133,14 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
             throw new IllegalStateException("You have to call init() at first in order to use this view");
         }
 
-        onViewOutingAnimationListener.onViewOuting(canvas, mAnimationValue);
-        //Timber.d("Get measured ... hieght = %d, width = %d", getMeasuredHeight(), getMeasuredWidth());
-        //int delta;
-        //if (mDoorType == VERTICAL_DOOR) {
-        //    delta = (int) ((mOriginalHeight / 2) * mProgress);
-        //} else {
-        //    delta = (int) ((mOriginalWidth / 2) * mProgress);
-        //}
-        //
-        ////1st door
-        //canvas.save();
-        //if (mDoorType == VERTICAL_DOOR) {
-        //    mRect.set(0, 0, mOriginalWidth, delta);
-        //} else {
-        //    mRect.set(0, 0, delta, mOriginalHeight);
-        //}
-        //if (IS_JBMR2) {
-        //    canvas.drawBitmap(mFullBitmap, mRect, mRect, null);
-        //} else {
-        //    canvas.clipRect(mRect);
-        //    super.dispatchDraw(canvas);
-        //}
-        //canvas.restore();
-        //
-        ////2nd door
-        //canvas.save();
-        //if (mDoorType == VERTICAL_DOOR) {
-        //    mRect.set(0, mOriginalHeight - delta, mOriginalWidth, mOriginalHeight);
-        //} else {
-        //    mRect.set(mOriginalWidth - delta, 0, mOriginalWidth, mOriginalHeight);
-        //}
-        //if (IS_JBMR2) {
-        //    canvas.drawBitmap(mFullBitmap, mRect, mRect, null);
-        //} else {
-        //    canvas.clipRect(mRect);
-        //    super.dispatchDraw(canvas);
-        //}
-        //canvas.restore();
-        super.dispatchDraw(canvas);
+        if (mFullBitmap == null) {
+            mFullBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+            mFullCanvas = new Canvas(mFullBitmap);
+        }
+        mFullCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
+        super.dispatchDraw(mFullCanvas);
+
+        onViewOutingAnimationListener.onViewOuting(canvas, mFullBitmap, mAnimationValue);
     }
 
     @Override

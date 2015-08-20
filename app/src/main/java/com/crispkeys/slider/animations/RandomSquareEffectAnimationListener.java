@@ -1,11 +1,13 @@
 package com.crispkeys.slider.animations;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Region;
 import android.os.Build;
+
 import com.crispkeys.slider.OnViewOutingAnimationListener;
+
 import timber.log.Timber;
 
 /**
@@ -30,6 +32,7 @@ public class RandomSquareEffectAnimationListener implements OnViewOutingAnimatio
             return shuffle(indexes);
         }
     };
+    private static final Paint BITMAP_PAINT = new Paint();
     private int mRectCountInHeight;
     private int mRectCountInWidth;
     private Rect[][] mRects;
@@ -48,33 +51,27 @@ public class RandomSquareEffectAnimationListener implements OnViewOutingAnimatio
     }
 
     @Override
-    public void onViewOuting(Canvas canvas, float value) {
+    public void onViewOuting(Canvas canvas, Bitmap bitmap, float value) {
         if (!isInitilized) {
             prepareGrid(canvas.getWidth(), canvas.getHeight());
             isInitilized = true;
         }
 
         int threshold = (int) (mRectCountInWidth * mRectCountInHeight * value);
-        Region region = new Region();
-
         for (int i = 0; i < mRectIndexes.length; i++) {
             if (i >= threshold) {
                 return;
             }
-            //canvas.save();
+            canvas.save();
 
             int[] index = mRectIndexes[i];
             Rect rect = mRects[index[0]][index[1]];
-            region.op(rect, Region.Op.UNION);
-            //if(IS_JBMR2) {
-            //    canvas.drawBitmap(mFullBitmap, rect, rect, null);
-            //} else {
+            canvas.clipRect(rect);
 
-            //}
-            //Timber.d("Animated");
-            //            canvas.restore();
+            canvas.drawBitmap(bitmap, 0, 0, BITMAP_PAINT);
+
+            canvas.restore();
         }
-        canvas.drawPath(region.getBoundaryPath(), new Paint());
     }
 
     private void prepareGrid(int w, int h) {
