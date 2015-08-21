@@ -141,7 +141,7 @@ public class AnimatedView extends FrameLayout {
         nextView =
             AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView(getNextPageIndex()));
 
-        currentView.setAnimationValue(1);
+        currentView.setAnimatedValue(1);
         addView(currentView);
         mHandler.postDelayed(ticker, MIN_HOLD_DURATION);
     }
