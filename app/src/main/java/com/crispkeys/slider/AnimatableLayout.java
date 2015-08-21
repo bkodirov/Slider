@@ -26,10 +26,10 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     private int mDoorType;
 
-    private Bitmap mFullBitmap;
-    private Canvas mFullCanvas;
+    private Bitmap mBufferBitmap;
+    private Canvas mBufferCanvas;
     private OnViewOutingAnimationListener onViewOutingAnimationListener;
-    private float mAnimationValue;
+    private float mAnimatedValue;
 
     public AnimatableLayout(Context context) {
         super(context);
@@ -56,12 +56,12 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         mDoorType = doorType;
     }
 
-    public float getAnimationValue() {
-        return mAnimationValue;
+    public float getAnimatedValue() {
+        return mAnimatedValue;
     }
 
-    public void setAnimationValue(float animationValue) {
-        mAnimationValue = animationValue;
+    public void setAnimatedValue(float animationValue) {
+        mAnimatedValue = animationValue;
         invalidate();
     }
 
@@ -110,22 +110,16 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
         mOriginalWidth = getMeasuredWidth();
         mOriginalHeight = getMeasuredHeight();
-
-        //if (IS_JBMR2) {
-        //    mFullBitmap = Bitmap.createBitmap(mOriginalWidth, mOriginalHeight, Bitmap.Config.ARGB_8888);
-        //    Canvas canvas = new Canvas(mFullBitmap);
-        //    getChildAt(0).draw(canvas);
-        //}
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        Log.d("ANOMATION", "Valiue = " + mAnimationValue);
+        Log.d("ANOMATION", "Valiue = " + mAnimatedValue);
 
-        if (mAnimationValue <= 0)
+        if (mAnimatedValue <= 0)
             return;
 
-        if (isInEditMode() || mAnimationValue >= 1f) {
+        if (isInEditMode() || mAnimatedValue >= 1f) {
             super.dispatchDraw(canvas);
             return;
         }
@@ -133,19 +127,18 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
             throw new IllegalStateException("You have to call init() at first in order to use this view");
         }
 
-        if (mFullBitmap == null) {
-            mFullBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-            mFullCanvas = new Canvas(mFullBitmap);
+        if (mBufferBitmap == null) {
+            mBufferBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+            mBufferCanvas = new Canvas(mBufferBitmap);
         }
-        mFullCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
-        super.dispatchDraw(mFullCanvas);
+        mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
+        super.dispatchDraw(mBufferCanvas);
 
-        onViewOutingAnimationListener.onViewOuting(canvas, mFullBitmap, mAnimationValue);
+        onViewOutingAnimationListener.onViewOuting(canvas, mBufferBitmap, mAnimatedValue);
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        mAnimationValue = (Float) animation.getAnimatedValue();
-        invalidate();
+        setAnimatedValue((Float) animation.getAnimatedValue());
     }
 }
