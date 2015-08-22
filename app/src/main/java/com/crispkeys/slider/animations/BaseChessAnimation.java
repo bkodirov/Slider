@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import com.crispkeys.slider.OnViewOutingAnimationListener;
-import timber.log.Timber;
 
 /**
  * Created by Behzodbek Qodirov on 8/16/15.
@@ -24,7 +23,6 @@ public abstract class BaseChessAnimation implements OnViewOutingAnimationListene
 
     @Override
     public void onViewOuting(Canvas canvas, Bitmap bitmap, float value) {
-
         value = 1 - value;
         if (!isInitilized) {
             prepareGrid(canvas.getWidth(), canvas.getHeight());
@@ -50,7 +48,7 @@ public abstract class BaseChessAnimation implements OnViewOutingAnimationListene
 
 
     protected void prepareGrid(int w, int h) {
-        Timber.d("Prepare grid: Height - %d, Width - %d", h, w);
+        //Timber.d("Prepare grid: Height - %d, Width - %d", h, w);
         int rectWidth = w / RECT_COUNT_IN_WIDTH;
         int rectHeight = rectWidth;
 

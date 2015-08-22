@@ -32,10 +32,12 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     public static AnimatableLayout newInstance(Context context,
         OnViewOutingAnimationListener onViewOutingAnimationListener, View childView) {
+        Timber.d("newInstance create started");
 
         AnimatableLayout view = new AnimatableLayout(context);
         view.onViewOutingAnimationListener = onViewOutingAnimationListener;
         view.addView(childView);
+        Timber.d("newInstance create end");
         return view;
     }
 
@@ -44,6 +46,7 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
     }
 
     public void setAnimatedValue(float animationValue) {
+        //Timber.d("Animated Value: " +animationValue);
         mAnimatedValue = animationValue;
         invalidate();
     }
@@ -82,20 +85,20 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-
+        //Timber.d("Animated Value: " +mAnimatedValue);
         if (isInEditMode() || mAnimatedValue >= 1f || mAnimatedValue <= 0) {
             super.dispatchDraw(canvas);
             return;
         }
 
-
         if (mBufferBitmap == null) {
             mBufferBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
             mBufferCanvas = new Canvas(mBufferBitmap);
+            Timber.e("Created new Bitmap");
         }
+
         mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         super.dispatchDraw(mBufferCanvas);
-        Timber.d("super.dispatchDraw(mBufferCanvas);");
 
         onViewOutingAnimationListener.onViewOuting(canvas, mBufferBitmap, mAnimatedValue);
     }
