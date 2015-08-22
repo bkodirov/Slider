@@ -4,34 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Build;
-
 import com.crispkeys.slider.OnViewOutingAnimationListener;
-
 import timber.log.Timber;
 
 /**
  * Created by Behzodbek Qodirov on 8/16/15.
  */
-public class RandomSquareEffectAnimationListener implements OnViewOutingAnimationListener {
+public abstract class BaseChessAnimation implements OnViewOutingAnimationListener {
 
     public static final int RECT_COUNT_IN_WIDTH = 10;
 
-    static final boolean IS_JBMR2 = Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2;
-    private static final IndexesBuilder sRandomIndexesBuilder = new IndexesBuilder() {
-        @Override
-        public int[][] build(int[][] indexes, int rectCountInWidth, int rectCountInHeight) {
-            int index = 0;
-            for (int x = 0; x < rectCountInWidth; x++) {
-                for (int y = 0; y < rectCountInHeight; y++) {
-                    indexes[index][0] = x;
-                    indexes[index][1] = y;
-                    index++;
-                }
-            }
-            return shuffle(indexes);
-        }
-    };
     private static final Paint BITMAP_PAINT = new Paint();
     private int mRectCountInHeight;
     private int mRectCountInWidth;
@@ -39,19 +21,11 @@ public class RandomSquareEffectAnimationListener implements OnViewOutingAnimatio
     private int[][] mRectIndexes;
     private boolean isInitilized;
 
-    private static int[][] shuffle(int[][] array) {
-        int n = array.length;
-        for (int i = 0; i < n; i++) {
-            int r = i + (int) (Math.random() * (n - i));
-            int[] tmp = array[i];
-            array[i] = array[r];
-            array[r] = tmp;
-        }
-        return array;
-    }
 
     @Override
     public void onViewOuting(Canvas canvas, Bitmap bitmap, float value) {
+
+        value = 1 - value;
         if (!isInitilized) {
             prepareGrid(canvas.getWidth(), canvas.getHeight());
             isInitilized = true;
@@ -74,7 +48,8 @@ public class RandomSquareEffectAnimationListener implements OnViewOutingAnimatio
         }
     }
 
-    private void prepareGrid(int w, int h) {
+
+    protected void prepareGrid(int w, int h) {
         Timber.d("Prepare grid: Height - %d, Width - %d", h, w);
         int rectWidth = w / RECT_COUNT_IN_WIDTH;
         int rectHeight = rectWidth;
@@ -113,16 +88,9 @@ public class RandomSquareEffectAnimationListener implements OnViewOutingAnimatio
             }
         }
 
-        sRandomIndexesBuilder.build(mRectIndexes, mRectCountInWidth, mRectCountInHeight);
-
-        //if (IS_JBMR2) {
-        //    mFullBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        //    Canvas canvas = new Canvas(mFullBitmap);
-        //    getChildAt(0).draw(canvas);
-        //}
+        build(mRectIndexes, mRectCountInWidth, mRectCountInHeight);
     }
 
-    private interface IndexesBuilder {
-        public int[][] build(int[][] indexes, int rectCountInWidth, int rectCountInHeight);
-    }
+    public abstract int[][] build(int[][] indexes, int rectCountInWidth, int rectCountInHeight);
+
 }

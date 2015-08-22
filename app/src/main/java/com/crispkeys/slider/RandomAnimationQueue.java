@@ -1,6 +1,8 @@
 package com.crispkeys.slider;
 
-import com.crispkeys.slider.animations.RandomSquareEffectAnimationListener;
+import com.crispkeys.slider.animations.BottomLeftChessAnimation;
+import com.crispkeys.slider.animations.RandomChessAnimation;
+import com.crispkeys.slider.animations.TopLeftChessAnimation;
 import java.util.Queue;
 
 /**
@@ -9,8 +11,9 @@ import java.util.Queue;
 public class RandomAnimationQueue extends AbstractAnimationQueue<OnViewOutingAnimationListener> {
 
     public RandomAnimationQueue() {
-        OnViewOutingAnimationListener randomAnimation = new RandomSquareEffectAnimationListener();
-        addAnimation(RandomSquareEffectAnimationListener.class);
+        addAnimation(RandomChessAnimation.class);
+        addAnimation(BottomLeftChessAnimation.class);
+        addAnimation(TopLeftChessAnimation.class);
     }
 
     @Override

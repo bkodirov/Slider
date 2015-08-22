@@ -6,25 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import timber.log.Timber;
 
 public class AnimatableLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener {
-
-    public static final int HORIZONTAL_DOOR = 1;
-    public static final int VERTICAL_DOOR = 2;
-    static final boolean IS_JBMR2 = Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2;
-    private static final String TAG = "AnimatedDoorLayout";
-    private Rect mRect = new Rect();
-
-    private int mOriginalWidth;
-    private int mOriginalHeight;
-
-    private int mDoorType;
 
     private Bitmap mBufferBitmap;
     private Canvas mBufferCanvas;
@@ -50,10 +37,6 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         view.onViewOutingAnimationListener = onViewOutingAnimationListener;
         view.addView(childView);
         return view;
-    }
-
-    public void setDoorType(int doorType) {
-        mDoorType = doorType;
     }
 
     public float getAnimatedValue() {
@@ -89,7 +72,6 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         View child = getChildAt(0);
         child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
-        updateDoor();
     }
 
     private void throwCustomException(int numOfChildViews) {
@@ -98,41 +80,22 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         }
     }
 
-    private void updateDoor() {
-        prepareDoor();
-        invalidate();
-    }
-
-    private void prepareDoor() {
-        if (isInEditMode()) {
-            return;
-        }
-
-        mOriginalWidth = getMeasuredWidth();
-        mOriginalHeight = getMeasuredHeight();
-    }
-
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        Log.d("ANOMATION", "Valiue = " + mAnimatedValue);
 
-        if (mAnimatedValue <= 0)
-            return;
-
-        if (isInEditMode() || mAnimatedValue >= 1f) {
+        if (isInEditMode() || mAnimatedValue >= 1f || mAnimatedValue <= 0) {
             super.dispatchDraw(canvas);
             return;
         }
-        if (onViewOutingAnimationListener == null) {
-            throw new IllegalStateException("You have to call init() at first in order to use this view");
-        }
+
 
         if (mBufferBitmap == null) {
             mBufferBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
             mBufferCanvas = new Canvas(mBufferBitmap);
         }
-        mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
+        mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         super.dispatchDraw(mBufferCanvas);
+        Timber.d("super.dispatchDraw(mBufferCanvas);");
 
         onViewOutingAnimationListener.onViewOuting(canvas, mBufferBitmap, mAnimatedValue);
     }

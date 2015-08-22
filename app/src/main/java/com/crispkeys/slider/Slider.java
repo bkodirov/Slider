@@ -14,7 +14,7 @@ import timber.log.Timber;
 /**
  * Created by Behzodbek Qodirov on 8/15/15.
  */
-public class AnimatedView extends FrameLayout {
+public class Slider extends FrameLayout {
 
     private static final long MAX_ANIMATION_DURATION = 2000;
     private static final long MIN_ANIMATION_DURATION = 500;
@@ -40,21 +40,18 @@ public class AnimatedView extends FrameLayout {
         public void run() {
             checkAdapter();
             try {
-                //currentView.setDrawingCacheEnabled(true);
-                //currentView.buildDrawingCache();
-                //final Bitmap bm = currentView.getDrawingCache();
-
                 ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        nextView.onAnimationUpdate(animation);
+                        currentView.onAnimationUpdate(animation);
                     }
                 });
                 valueAnimator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        addView(nextView, 1);
+
+                        addView(nextView, 0);
                     }
 
                     @Override
@@ -75,7 +72,7 @@ public class AnimatedView extends FrameLayout {
                             mAdapter.getView(getNextPageIndex()));
 
                         invalidate();
-                        Timber.d("Child size: " + getChildCount());
+                        //Timber.d("Child size: " + getChildCount());
                     }
 
                     @Override
@@ -96,20 +93,20 @@ public class AnimatedView extends FrameLayout {
         }
     };
 
-    public AnimatedView(Context context) {
+    public Slider(Context context) {
         super(context);
     }
 
-    public AnimatedView(Context context, AttributeSet attrs) {
+    public Slider(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public AnimatedView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Slider(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public AnimatedView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public Slider(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
@@ -141,7 +138,6 @@ public class AnimatedView extends FrameLayout {
         nextView =
             AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView(getNextPageIndex()));
 
-        currentView.setAnimatedValue(1);
         addView(currentView);
         mHandler.postDelayed(ticker, MIN_HOLD_DURATION);
     }
