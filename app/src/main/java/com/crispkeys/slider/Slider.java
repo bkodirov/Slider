@@ -17,7 +17,7 @@ import timber.log.Timber;
 public class Slider extends FrameLayout {
 
     private static final long MAX_ANIMATION_DURATION = 2000;
-    private static final long MIN_ANIMATION_DURATION = 500;
+    private static final long MIN_ANIMATION_DURATION = 800;
     private static final long MIN_HOLD_DURATION = 3000;
     private long mDuration = MIN_ANIMATION_DURATION;
     private long mHoldDuration = MIN_HOLD_DURATION;
@@ -44,9 +44,6 @@ public class Slider extends FrameLayout {
                 valueAnimator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        Timber.d("onAnimationStart: "+valueAnimator.hashCode());
-                        addView(nextView, 0);
-                        Timber.d("onAnimationStart: view added");
                     }
 
                     @Override
@@ -59,9 +56,7 @@ public class Slider extends FrameLayout {
                         //Prepare next view after animation end in order to prevent animation lagging
                         OnViewOutingAnimationListener nextViewAnimationListener = null;
                         try {
-                            Timber.d("Reflection start");
                             nextViewAnimationListener = mAnimationQueue.getNextAnimation().newInstance();
-                            Timber.d("Reflection end");
                         } catch (Exception e) {
                             Timber.e(Log.getStackTraceString(e));
                         }
@@ -69,8 +64,8 @@ public class Slider extends FrameLayout {
                         nextView = AnimatableLayout.newInstance(getContext(), nextViewAnimationListener,
                             mAdapter.getView(getNextPageIndex()));
 
-                        //invalidate();
-                        //Timber.d("onAnimationEnd end: "+valueAnimator.hashCode());
+                        addView(nextView, 0);
+
                     }
 
                     @Override
@@ -84,14 +79,7 @@ public class Slider extends FrameLayout {
                     }
                 });
 
-                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        //Timber.d("onAnimationUpdate: " + valueAnimator.hashCode());
-                        currentView.onAnimationUpdate(animation);
-                    }
-                });
-
+                valueAnimator.addUpdateListener(currentView);
                 valueAnimator.start();
                 mHandler.postDelayed(this, mHoldDuration);
             } catch (Exception e) {
@@ -135,10 +123,8 @@ public class Slider extends FrameLayout {
         OnViewOutingAnimationListener currentViewAnimationListener = null;
         OnViewOutingAnimationListener nextViewAnimationListener = null;
         try {
-            Timber.d("Reflection start");
             currentViewAnimationListener = mAnimationQueue.getNextAnimation().newInstance();
             nextViewAnimationListener = mAnimationQueue.getNextAnimation().newInstance();
-            Timber.d("Reflection end");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,6 +134,7 @@ public class Slider extends FrameLayout {
             AnimatableLayout.newInstance(getContext(), nextViewAnimationListener, mAdapter.getView(getNextPageIndex()));
 
         addView(currentView);
+        addView(nextView, 0);
         mHandler.postDelayed(ticker, MIN_HOLD_DURATION);
     }
 

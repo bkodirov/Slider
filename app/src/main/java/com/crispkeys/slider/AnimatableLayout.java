@@ -9,11 +9,12 @@ import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import java.lang.ref.WeakReference;
 import timber.log.Timber;
 
 public class AnimatableLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener {
 
-    private Bitmap mBufferBitmap;
+    private WeakReference<Bitmap> mBufferBitmap;
     private Canvas mBufferCanvas;
     private OnViewOutingAnimationListener onViewOutingAnimationListener;
     private float mAnimatedValue;
@@ -92,19 +93,28 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         }
 
         if (mBufferBitmap == null) {
-            mBufferBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-            mBufferCanvas = new Canvas(mBufferBitmap);
+            mBufferBitmap = new WeakReference<>(
+                Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888));
+            mBufferCanvas = new Canvas(mBufferBitmap.get());
             Timber.e("Created new Bitmap");
         }
 
         mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         super.dispatchDraw(mBufferCanvas);
 
-        onViewOutingAnimationListener.onViewOuting(canvas, mBufferBitmap, mAnimatedValue);
+        onViewOutingAnimationListener.onViewOuting(canvas, mBufferBitmap.get(), mAnimatedValue);
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         setAnimatedValue((Float) animation.getAnimatedValue());
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mBufferBitmap != null && mBufferBitmap.get() != null && !mBufferBitmap.get().isRecycled()) {
+            mBufferBitmap.get().recycle();
+        }
     }
 }
