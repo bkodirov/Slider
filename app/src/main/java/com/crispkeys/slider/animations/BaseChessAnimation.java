@@ -23,7 +23,6 @@ public abstract class BaseChessAnimation implements OnViewOutingAnimationListene
 
     @Override
     public void onViewOuting(Canvas canvas, Bitmap bitmap, float value) {
-        value = 1 - value;
         if (!isInitilized) {
             prepareGrid(canvas.getWidth(), canvas.getHeight());
             isInitilized = true;

@@ -40,7 +40,7 @@ public class Slider extends FrameLayout {
         public void run() {
             checkAdapter();
             try {
-                final ValueAnimator valueAnimator = ValueAnimator.ofFloat(1).setDuration(mDuration);
+                final ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(mDuration);
                 valueAnimator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
