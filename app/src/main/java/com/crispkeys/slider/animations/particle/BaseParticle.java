@@ -36,8 +36,7 @@ public abstract class BaseParticle {
         else if (progress <= mScope.start)
             innerProgress = 0f;
         else
-            innerProgress = mScope.length / (progress - mScope.start);
-
+            innerProgress = (progress - mScope.start) / mScope.length;
         doDraw(canvas, bitmap, progress, innerProgress);
     }
 

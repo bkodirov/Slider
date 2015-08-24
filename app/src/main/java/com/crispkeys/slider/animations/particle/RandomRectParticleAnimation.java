@@ -6,7 +6,7 @@ package com.crispkeys.slider.animations.particle;
 public class RandomRectParticleAnimation extends BaseRectParticleAnimation {
 
     public RandomRectParticleAnimation() {
-        this(20, 1);
+        this(10, 0);
     }
 
     public RandomRectParticleAnimation(int rectCountInWidth) {

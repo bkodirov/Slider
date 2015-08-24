@@ -9,7 +9,7 @@ import android.graphics.Rect;
  */
 public class RectParticle extends BaseParticle {
 
-    private Rect mRect;
+    protected final Rect mRect;
 
     public RectParticle(Rect rect, Scope scope) {
         super(scope);
@@ -22,8 +22,12 @@ public class RectParticle extends BaseParticle {
             return;
 
         canvas.save();
-        canvas.clipRect(mRect);
+        preDraw(canvas, progress, innerProgress);
         canvas.drawBitmap(bitmap, 0, 0, getPaint(progress, innerProgress));
         canvas.restore();
+    }
+
+    protected void preDraw(Canvas canvas, float progress, float innerProgress) {
+        canvas.clipRect(mRect);
     }
 }

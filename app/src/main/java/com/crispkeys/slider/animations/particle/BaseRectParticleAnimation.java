@@ -56,7 +56,8 @@ public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
                     bottom = height;
                 }
 
-                particles[x + y * mRectCountInWidth] = new RectParticle(
+                int index = x + y * mRectCountInWidth;
+                particles[index] = newParticle(index,
                         new Rect(left, top, right, bottom),
                         getScope(x, y, mRectCountInWidth, mRectCountInHeight)
                 );
@@ -65,9 +66,13 @@ public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
         return particles;
     }
 
-    private BaseParticle.Scope getScope(int x, int y, int maxX, int maxY) {
+    protected BaseParticle.Scope getScope(int x, int y, int maxX, int maxY) {
         if (mScopeArray == null)
             mScopeArray = prepareScopeArray(maxX, maxY);
         return mScopeArray[x + y * maxX];
+    }
+
+    protected BaseParticle newParticle(int index, Rect rect, BaseParticle.Scope scope) {
+        return new RectParticle(rect, scope);
     }
 }
