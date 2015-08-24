@@ -5,6 +5,17 @@ package com.crispkeys.slider.animations.particle;
  */
 public class RandomRectParticleAnimation extends BaseRectParticleAnimation {
 
+    public RandomRectParticleAnimation() {
+        this(20, 1);
+    }
+
+    public RandomRectParticleAnimation(int rectCountInWidth) {
+        super(rectCountInWidth);
+    }
+
+    public RandomRectParticleAnimation(int rectCountInWidth, int rectCountInHeight) {
+        super(rectCountInWidth, rectCountInHeight);
+    }
 
     protected BaseParticle.Scope[] prepareScopeArray(int maxX, int maxY) {
         float progress = 0;

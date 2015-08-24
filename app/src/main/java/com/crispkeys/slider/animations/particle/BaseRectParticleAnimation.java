@@ -7,19 +7,29 @@ import android.graphics.Rect;
  */
 public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
 
-    public static final int RECT_COUNT_IN_WIDTH = 10;
-
+    private int mRectCountInWidth;
+    private int mRectCountInHeight;
     private BaseParticle.Scope[] mScopeArray;
+
+    public BaseRectParticleAnimation(int rectCountInWidth) {
+        this(rectCountInWidth, 0);
+    }
+
+    public BaseRectParticleAnimation(int rectCountInWidth, int rectCountInHeight) {
+        super();
+        mRectCountInWidth = rectCountInWidth;
+        mRectCountInHeight = rectCountInHeight;
+    }
 
     protected abstract BaseParticle.Scope[] prepareScopeArray(int maxX, int max);
 
     @Override
     public BaseParticle[] prepareParticles(int width, int height) {
-        int rectWidth = width / RECT_COUNT_IN_WIDTH;
+        int rectWidth = width / mRectCountInWidth;
         int rectHeight = rectWidth;
 
-        int mRectCountInWidth = RECT_COUNT_IN_WIDTH;
-        int mRectCountInHeight = height / rectHeight;
+        if (mRectCountInHeight <= 0)
+            mRectCountInHeight = height / rectHeight;
         BaseParticle[] particles = new BaseParticle[mRectCountInHeight * mRectCountInWidth];
 
         int delta = width % rectWidth;
