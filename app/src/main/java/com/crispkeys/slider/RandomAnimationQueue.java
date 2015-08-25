@@ -3,7 +3,7 @@ package com.crispkeys.slider;
 import com.crispkeys.slider.animations.BottomLeftChessAnimation;
 import com.crispkeys.slider.animations.TopLeftChessAnimation;
 import com.crispkeys.slider.animations.particle.LineSlideAnimation;
-import com.crispkeys.slider.animations.particle.RandomRectParticleAnimation;
+import com.crispkeys.slider.animations.particle.RandomRectPieceAnimation;
 
 import java.util.Queue;
 
@@ -15,7 +15,7 @@ public class RandomAnimationQueue extends AbstractAnimationQueue<OnViewOutingAni
     public RandomAnimationQueue() {
 //        addAnimation(RandomChessAnimation.class);
         addAnimation(LineSlideAnimation.class);
-        addAnimation(RandomRectParticleAnimation.class);
+        addAnimation(RandomRectPieceAnimation.class);
         addAnimation(LineSlideAnimation2.class);
         addAnimation(BottomLeftChessAnimation.class);
         addAnimation(TopLeftChessAnimation.class);

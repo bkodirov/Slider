@@ -7,17 +7,17 @@ import android.graphics.Rect;
 /**
  * Created by Shurygin Denis on 2015-08-24.
  */
-public class SlideRectParticle extends RectParticle {
+public class SlideRectPiece extends RectPiece {
 
     private final PointF mDirection;
     private final boolean mMotionDisabled;
 
-    public SlideRectParticle(Rect rect, Scope scope, PointF direction) {
-        this(rect, scope, direction, false);
+    public SlideRectPiece(Rect rect, Schedule schedule, PointF direction) {
+        this(rect, schedule, direction, false);
     }
 
-    public SlideRectParticle(Rect rect, Scope scope, PointF direction, boolean motionDisabled) {
-        super(rect, scope);
+    public SlideRectPiece(Rect rect, Schedule schedule, PointF direction, boolean motionDisabled) {
+        super(rect, schedule);
         mDirection = direction;
         mMotionDisabled = motionDisabled;
     }

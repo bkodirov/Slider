@@ -7,12 +7,12 @@ import android.graphics.Rect;
 /**
  * Created by Shurygin Denis on 2015-08-24.
  */
-public class RectParticle extends BaseParticle {
+public class RectPiece extends BasePiece {
 
     protected final Rect mRect;
 
-    public RectParticle(Rect rect, Scope scope) {
-        super(scope);
+    public RectPiece(Rect rect, Schedule schedule) {
+        super(schedule);
         mRect = rect;
     }
 

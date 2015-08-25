@@ -6,9 +6,9 @@ import android.graphics.Rect;
 /**
  * Created by Shurygin Denis on 2015-08-24.
  */
-public class LineSlideAnimation extends BaseRectParticleAnimation {
+public class LineSlideAnimation extends BaseRectPieceAnimation {
 
-    private final static BaseParticle.Scope SCOPE = new BaseParticle.Scope(0f, 1f);
+    private final static BasePiece.Schedule SCHEDULE = new BasePiece.Schedule(0f, 1f);
     private final static PointF DIRECTION_UP = new PointF(0, -1);
     private final static PointF DIRECTION_DOWN = new PointF(0, 1);
 
@@ -28,17 +28,17 @@ public class LineSlideAnimation extends BaseRectParticleAnimation {
     }
 
     @Override
-    protected BaseParticle newParticle(int index, Rect rect, BaseParticle.Scope scope) {
-        return new SlideRectParticle(rect, scope, getDirection(index), mMotionDisabled);
+    protected BasePiece newPiece(int index, Rect rect, BasePiece.Schedule schedule) {
+        return new SlideRectPiece(rect, schedule, getDirection(index), mMotionDisabled);
     }
 
     @Override
-    protected BaseParticle.Scope getScope(int index) {
-        return SCOPE;
+    protected BasePiece.Schedule getSchedule(int index) {
+        return SCHEDULE;
     }
 
     @Override
-    protected BaseParticle.Scope[] prepareScopeArray(int maxX, int maxY) {
+    protected BasePiece.Schedule[] prepareScheduleArray(int pieceCountX, int pieceCountY) {
         return null;
     }
 
