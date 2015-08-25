@@ -33,7 +33,7 @@ public class LineSlideAnimation extends BaseRectParticleAnimation {
     }
 
     @Override
-    protected BaseParticle.Scope getScope(int x, int y, int maxX, int maxY) {
+    protected BaseParticle.Scope getScope(int index) {
         return SCOPE;
     }
 

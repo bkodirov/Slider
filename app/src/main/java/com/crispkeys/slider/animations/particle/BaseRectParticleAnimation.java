@@ -60,15 +60,15 @@ public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
                 int index = x + y * mRectCountInWidth;
                 particles[index] = newParticle(index,
                         new Rect(left, top, right, bottom),
-                        getScope(x, y, mRectCountInWidth, mRectCountInHeight)
+                        getScope(index)
                 );
             }
         }
         return particles;
     }
 
-    protected BaseParticle.Scope getScope(int x, int y, int maxX, int maxY) {
-        return mScopeArray[x + y * maxX];
+    protected BaseParticle.Scope getScope(int index) {
+        return mScopeArray[index];
     }
 
     protected BaseParticle newParticle(int index, Rect rect, BaseParticle.Scope scope) {
