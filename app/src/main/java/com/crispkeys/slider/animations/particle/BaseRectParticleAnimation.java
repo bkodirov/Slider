@@ -31,6 +31,7 @@ public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
         if (mRectCountInHeight <= 0)
             mRectCountInHeight = height / rectHeight;
         BaseParticle[] particles = new BaseParticle[mRectCountInHeight * mRectCountInWidth];
+        mScopeArray = prepareScopeArray(mRectCountInHeight, mRectCountInWidth);
 
         int delta = width % rectWidth;
         if (delta > 0) {
@@ -67,8 +68,6 @@ public abstract class BaseRectParticleAnimation extends BaseParticleAnimation {
     }
 
     protected BaseParticle.Scope getScope(int x, int y, int maxX, int maxY) {
-        if (mScopeArray == null)
-            mScopeArray = prepareScopeArray(maxX, maxY);
         return mScopeArray[x + y * maxX];
     }
 
