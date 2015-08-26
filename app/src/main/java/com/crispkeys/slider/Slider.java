@@ -1,6 +1,7 @@
 package com.crispkeys.slider;
 
 import android.animation.Animator;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -23,6 +24,9 @@ public class Slider extends FrameLayout {
     private long mHoldDuration = MIN_HOLD_DURATION;
     //Timer
     private Handler mHandler = new Handler();
+
+    //Interpolator for animation
+    private TimeInterpolator mInterpolator;
 
     //Current page index
     private int currentPageIndex;
@@ -78,7 +82,9 @@ public class Slider extends FrameLayout {
 
                     }
                 });
-
+                if(mInterpolator != null) {
+                    valueAnimator.setInterpolator(mInterpolator);
+                }
                 valueAnimator.addUpdateListener(currentView);
                 valueAnimator.start();
                 mHandler.postDelayed(this, mHoldDuration);
@@ -148,6 +154,10 @@ public class Slider extends FrameLayout {
     public int getCurrentPageIndex() {
         checkAdapter();
         return currentPageIndex;
+    }
+
+    public void setInterpolator(TimeInterpolator interpolator) {
+        mInterpolator = interpolator;
     }
 
     private int getNextPageIndex() {
