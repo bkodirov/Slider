@@ -1,4 +1,4 @@
-package com.crispkeys.slider.animations.particle;
+package com.crispkeys.slider.animation.pice;
 
 import android.graphics.Canvas;
 import android.graphics.PointF;

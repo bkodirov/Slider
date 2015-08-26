@@ -31,7 +31,7 @@ public class Slider extends FrameLayout {
     private AnimatableLayout nextView;
 
     //Animation Queue
-    private AbstractAnimationQueue<OnViewOutingAnimationListener> mAnimationQueue = new RandomAnimationQueue();
+    private AbstractAnimationQueue<OnViewOutingAnimationListener> mAnimationQueue = new SimpleAnimationQueue();
 
     private BaseAdapter mAdapter;
     private Runnable ticker = new Runnable() {

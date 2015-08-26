@@ -1,15 +1,17 @@
-package com.crispkeys.slider.animations.particle;
+package com.crispkeys.slider.animation.particle;
 
 import android.graphics.Rect;
+import com.crispkeys.slider.animation.pice.BasePiece;
+import com.crispkeys.slider.animation.pice.RectPiece;
 
 /**
  * Created by Shurygin Denis on 2015-08-24.
  */
 public abstract class BaseRectPieceAnimation extends BasePieceAnimation {
 
-    private int mPieceCountX;
-    private int mPieceCountY;
-    private BasePiece.Schedule[] mScheduleArray;
+    protected int mPieceCountX;
+    protected int mPieceCountY;
+    protected BasePiece.Schedule[] mScheduleArray;
 
     public BaseRectPieceAnimation(int pieceCountX) {
         this(pieceCountX, 0);

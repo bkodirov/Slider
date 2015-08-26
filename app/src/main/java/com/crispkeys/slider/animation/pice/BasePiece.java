@@ -1,4 +1,4 @@
-package com.crispkeys.slider.animations.particle;
+package com.crispkeys.slider.animation.pice;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,6 +21,14 @@ public abstract class BasePiece {
             this.start = start;
             this.end = end;
             this.length = end - start;
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
         }
     }
 
