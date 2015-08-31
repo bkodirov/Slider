@@ -1,4 +1,4 @@
-package com.crispkeys.slider;
+package com.crispkeys.slider.widget.slider;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

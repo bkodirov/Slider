@@ -1,6 +1,6 @@
-package com.crispkeys.slider.animation.particle;
+package com.crispkeys.slider.widget.slider.animation.particle;
 
-import com.crispkeys.slider.animation.pice.BasePiece;
+import com.crispkeys.slider.widget.slider.animation.pice.BasePiece;
 
 /**
  * Created by Shurygin Denis on 2015-08-24.

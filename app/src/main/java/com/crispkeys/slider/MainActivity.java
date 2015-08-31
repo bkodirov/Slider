@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import com.crispkeys.slider.widget.slider.Slider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +63,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        int getCount() {
+        public int getCount() {
             return mResList.size();
         }
 
         @Override
-        View getView(int position) {
+        public View getView(int position) {
             int resId = mResList.get(position);
             //Log.d("myLogs", "resId: "+resId);
             View root = LayoutInflater.from(mContext).inflate(R.layout.row_animated_view, null);

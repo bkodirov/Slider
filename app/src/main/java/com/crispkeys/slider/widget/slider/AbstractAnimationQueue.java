@@ -1,4 +1,4 @@
-package com.crispkeys.slider;
+package com.crispkeys.slider.widget.slider;
 
 import java.util.Collection;
 import java.util.LinkedList;

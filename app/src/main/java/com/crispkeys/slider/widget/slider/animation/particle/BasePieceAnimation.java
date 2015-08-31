@@ -1,10 +1,10 @@
-package com.crispkeys.slider.animation.particle;
+package com.crispkeys.slider.widget.slider.animation.particle;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.crispkeys.slider.OnViewOutingAnimationListener;
-import com.crispkeys.slider.animation.pice.BasePiece;
+import com.crispkeys.slider.widget.slider.OnViewOutingAnimationListener;
+import com.crispkeys.slider.widget.slider.animation.pice.BasePiece;
 
 /**
  * Created by Shurygin Denis on 2015-08-24.
