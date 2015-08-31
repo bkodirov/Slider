@@ -1,4 +1,4 @@
-package com.crispkeys.slider.widget.slider;
+package com.crispkeys.slider;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -10,6 +10,9 @@ import java.util.Queue;
 public abstract class AbstractAnimationQueue<T extends OnViewOutingAnimationListener> {
 
     private Queue<Class<? extends T>> mAnimationQueue = new LinkedList<>();
+
+    public AbstractAnimationQueue(){
+    }
 
     public abstract Class<? extends T> getNextAnimation();
 
