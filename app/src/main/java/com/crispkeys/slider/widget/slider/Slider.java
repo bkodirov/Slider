@@ -10,13 +10,14 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
+
+import com.crispkeys.slider.AbstractAnimationQueue;
 import com.crispkeys.slider.BaseAdapter;
+
 import timber.log.Timber;
 
-/**
- * Created by Behzodbek Qodirov on 8/15/15.
- */
 public class Slider extends FrameLayout implements AnimationManager.SliderAnimatorListener {
 
     private static final long MIN_HOLD_DURATION = 3000;
@@ -40,9 +41,13 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
     //Listener for page changing
     private OnPageChangeListener mOnPageChangeListener;
 
+    //Touch stats
+    private float mInitialX;
+    private float mInitialY;
+
     //Swiping
-    boolean mIsScrolling;
-    private int mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+    private boolean mIsScrolling;
+    private int mTouchSlop;
 
 
     private BaseAdapter mAdapter;
@@ -70,6 +75,8 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
 
     public Slider(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -166,7 +173,6 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
                 }
                 break;
             }
-
         }
 
         // In general, we don't want to intercept touch events. They should be
@@ -180,6 +186,43 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         // scroll this container).
         // This method will only be called if the touch event was intercepted in
         // onInterceptTouchEvent
+
+        switch (ev.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                mInitialX = ev.getX();
+                mInitialY = ev.getY();
+
+                mAnimationManager.stopAnimation();
+                return true;
+
+            case MotionEvent.ACTION_MOVE:
+                if(!mIsScrolling) {
+                    float xDiff = Math.abs(ev.getX() - mInitialX);
+                    float yDiff = Math.abs(ev.getY() - mInitialY);
+                    if (xDiff > mTouchSlop && xDiff > yDiff) {
+                        mIsScrolling = true;
+                        requestParentDisallowInterceptTouchEvent(true);
+                    }
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                break;
+        }
+
+        return false;
+    }
+
+    private void requestParentDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        final ViewParent parent = getParent();
+        if (parent != null) {
+            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
+    }
+
+    protected int calculateDistanceX(MotionEvent event){
+        return 0;
     }
 
     private int getPreviousPageIndex() {

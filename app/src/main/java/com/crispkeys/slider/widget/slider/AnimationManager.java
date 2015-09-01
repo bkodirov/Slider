@@ -5,9 +5,7 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.view.animation.LinearInterpolator;
 
-/**
- * Created by Behzodbek Qodirov on 8/27/15.
- */
+
 class AnimationManager {
     private static final long MAX_ANIMATION_DURATION = 2000;
     private static final long MIN_ANIMATION_DURATION = 800;
@@ -55,7 +53,7 @@ class AnimationManager {
     }
 
     void stopAnimation() {
-        if (mValueAnimator == null && mValueAnimator.isStarted()) {
+        if (mValueAnimator != null && mValueAnimator.isStarted()) {
             mValueAnimator.cancel();
         }else{
             throw new IllegalStateException("Animation not started yet");

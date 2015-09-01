@@ -1,9 +1,11 @@
 package com.crispkeys.slider.widget.slider;
 
+import com.crispkeys.slider.AbstractAnimationQueue;
 import com.crispkeys.slider.widget.slider.animation.particle.BottomRightRectPieceAnimation;
 import com.crispkeys.slider.widget.slider.animation.particle.LineSlideAnimation;
 import com.crispkeys.slider.widget.slider.animation.particle.RandomRectPieceAnimation;
 import com.crispkeys.slider.widget.slider.animation.particle.TopLeftRectPieceAnimation;
+
 import java.util.Queue;
 
 /**

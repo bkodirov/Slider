@@ -1,5 +1,7 @@
 package com.crispkeys.slider;
 
+import com.crispkeys.slider.widget.slider.OnViewOutingAnimationListener;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
