@@ -12,10 +12,8 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
-
 import com.crispkeys.slider.AbstractAnimationQueue;
 import com.crispkeys.slider.BaseAdapter;
-
 import timber.log.Timber;
 
 public class Slider extends FrameLayout implements AnimationManager.SliderAnimatorListener {
@@ -46,19 +44,21 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
     private float mInitialY;
 
     //Swiping
-    private boolean mIsScrolling;
     private int mTouchSlop;
-
+    private float mSwipeLength;
+    private float mSwipeScrollBackLength;
 
     private BaseAdapter mAdapter;
     private Runnable ticker = new Runnable() {
         @Override
         public void run() {
-            checkAdapter();
-            mAnimationManager.startAnimation(currentView);
-            mHandler.postDelayed(this, mHoldDuration);
+            //checkAdapter();
+            //mAnimationManager.startAnimation(currentView);
+            //mHandler.postDelayed(this, mHoldDuration);
         }
     };
+    private float mLastY;
+    private float mLastX;
 
     {
         mAnimationManager = new AnimationManager();
@@ -82,6 +82,14 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public Slider(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        //Set value for that fields after measuring view
+        mSwipeLength = getWidth() / 2;
+        mSwipeScrollBackLength = mSwipeLength/2;
     }
 
     public BaseAdapter getAdapter() {
@@ -140,37 +148,42 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
          * scrolling there.
          */
 
-
         final int action = MotionEventCompat.getActionMasked(ev);
 
         // Always handle the case of the touch gesture being complete.
         if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
             // Release the scroll.
-            mIsScrolling = false;
             return false; // Do not intercept touch event, let the child handle it
         }
 
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
-                if (mIsScrolling) {
-                    // We're currently scrolling, so yes, intercept the
-                    // touch event!
-                    return true;
-                }
 
                 // If the user has dragged her finger horizontally more than
                 // the touch slop, start the scroll
 
                 // left as an exercise for the reader
-                final int xDiff = calculateDistanceX(ev);
-
+                final float xDiff = calculateDistanceX(ev);
+                float yDiff = calculateDistanceY(ev);
                 // Touch slop should be calculated using ViewConfiguration
                 // constants.
-                if (xDiff > mTouchSlop) {
+                if (xDiff > mTouchSlop && xDiff * 0.5f > yDiff) {
                     // Start scrolling!
-                    mIsScrolling = true;
                     return true;
+                } else if (yDiff > mTouchSlop) {
+                    //if user starts scroll down let handle it to childs
+                    return false;
                 }
+
+                break;
+            }
+            case MotionEvent.ACTION_DOWN: {
+                /*
+                 * Remember location of down touch.
+                 * ACTION_DOWN always refers to pointer index 0.
+                 */
+                mLastX = mInitialX = ev.getX();
+                mLastY = mInitialY = ev.getY();
                 break;
             }
         }
@@ -180,6 +193,14 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         return false;
     }
 
+    private float calculateDistanceY(MotionEvent ev) {
+        return ev.getY() - mInitialY;
+    }
+
+    protected float calculateDistanceX(MotionEvent ev) {
+        return ev.getX() - mInitialX;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         // Here we actually handle the touch event (e.g. if the action is ACTION_MOVE,
@@ -187,31 +208,56 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         // This method will only be called if the touch event was intercepted in
         // onInterceptTouchEvent
 
-        switch (ev.getAction()){
+        int w = getWidth();
+
+        float x = ev.getX();
+        float y = ev.getY();
+
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mInitialX = ev.getX();
                 mInitialY = ev.getY();
+                mAnimationManager.onSwipe(currentView, 0);
+                //mAnimationManager.stopAnimation();
 
-                mAnimationManager.stopAnimation();
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                if(!mIsScrolling) {
-                    float xDiff = Math.abs(ev.getX() - mInitialX);
-                    float yDiff = Math.abs(ev.getY() - mInitialY);
-                    if (xDiff > mTouchSlop && xDiff > yDiff) {
-                        mIsScrolling = true;
-                        requestParentDisallowInterceptTouchEvent(true);
+                //TODO это поле в дальнейшим должен возврашать отрецательный число если свапнулся назад
+                float xDiff = Math.abs(x - mInitialX);
+                float yDiff = Math.abs(y - mInitialY);
+
+                //TODO тут анимашка должна начатся с нулья а не с 1
+                float animValue = 1 - Math.min(xDiff / mSwipeLength, 1.0f);
+                Timber.d("AnimValue: %f", animValue);
+
+                if (animValue == 1.0f) {
+                    return true;
+                }
+                if (xDiff > mTouchSlop && xDiff > yDiff) {
+                    requestParentDisallowInterceptTouchEvent(true);
+                    mAnimationManager.onSwipe(currentView, animValue);
+
+                    // Disallow Parent Intercept, just in case
+                    ViewParent parent = getParent();
+                    if (parent != null) {
+                        parent.requestDisallowInterceptTouchEvent(true);
                     }
+                    //Timber.d("X = %s, xDiff = %s", x, xDiff);
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                xDiff = Math.abs(x - mInitialX);
+
+                animValue = 1 - Math.min(xDiff / mSwipeLength, 1.0f);
+
+                //if(animValue)
+
                 break;
         }
-
-        return false;
+        return true;
     }
 
     private void requestParentDisallowInterceptTouchEvent(boolean disallowIntercept) {
@@ -219,10 +265,6 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         if (parent != null) {
             parent.requestDisallowInterceptTouchEvent(disallowIntercept);
         }
-    }
-
-    protected int calculateDistanceX(MotionEvent event){
-        return 0;
     }
 
     private int getPreviousPageIndex() {

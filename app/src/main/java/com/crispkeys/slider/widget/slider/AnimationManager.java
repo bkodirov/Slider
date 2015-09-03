@@ -60,7 +60,18 @@ class AnimationManager {
         }
     }
 
-    void onSwipe(){
+    void onSwipe(AnimatableLayout animatableLayout, float animValue){
+        if(animValue ==1.0f){
+            if (mSliderAnimatorListener != null) {
+                mSliderAnimatorListener.onSlideAnimationEnd();
+            }
+        }else if(animValue==0){
+            if (mSliderAnimatorListener != null) {
+                mSliderAnimatorListener.onSlideAnimationStart();
+            }
+        }else {
+            animatableLayout.onAnimationUpdate(animValue);
+        }
         //TODO реализовать тут анимация во время ручного свайпа, нуно учитывать что юзер может тапнуть на виюхху во
         // время анимации. тогда остановить анимацию и дальше ручками управлять
     }
