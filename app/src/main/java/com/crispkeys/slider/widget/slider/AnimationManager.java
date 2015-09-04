@@ -5,7 +5,6 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.view.animation.LinearInterpolator;
 
-
 class AnimationManager {
     private static final long MAX_ANIMATION_DURATION = 2000;
     private static final long MIN_ANIMATION_DURATION = 800;
@@ -18,8 +17,8 @@ class AnimationManager {
 
     private SliderAnimatorListener mSliderAnimatorListener;
 
-    void startAnimation(AnimatableLayout listener) {
-        mValueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(mDuration);
+    public void startAnimation(AnimatableLayout listener, float animValue) {
+        mValueAnimator = ValueAnimator.ofFloat(animValue, 0).setDuration(mDuration);
         mValueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -33,7 +32,7 @@ class AnimationManager {
                 if (mSliderAnimatorListener != null) {
                     mSliderAnimatorListener.onSlideAnimationEnd();
                 }
-              }
+            }
 
             @Override
             public void onAnimationCancel(Animator animation) {
@@ -52,29 +51,35 @@ class AnimationManager {
         mValueAnimator.start();
     }
 
+    void startAnimation(AnimatableLayout listener) {
+        startAnimation(listener, 1);
+    }
+
     void stopAnimation() {
         if (mValueAnimator != null && mValueAnimator.isStarted()) {
             mValueAnimator.cancel();
-        }else{
+            mValueAnimator = null;
+        } else {
             throw new IllegalStateException("Animation not started yet");
         }
     }
 
-    void onSwipe(AnimatableLayout animatableLayout, float animValue){
-        if(animValue ==1.0f){
+    void onSwipe(AnimatableLayout animatableLayout, float animValue) {
+        if (animValue == 1.0f) {
             if (mSliderAnimatorListener != null) {
                 mSliderAnimatorListener.onSlideAnimationEnd();
             }
-        }else if(animValue==0){
+        } else if (animValue == 0) {
             if (mSliderAnimatorListener != null) {
                 mSliderAnimatorListener.onSlideAnimationStart();
             }
-        }else {
+        } else {
             animatableLayout.onAnimationUpdate(animValue);
         }
         //TODO реализовать тут анимация во время ручного свайпа, нуно учитывать что юзер может тапнуть на виюхху во
         // время анимации. тогда остановить анимацию и дальше ручками управлять
     }
+
     void setAnimationDuration(long duration) {
         if (duration < MIN_ANIMATION_DURATION || duration > MAX_ANIMATION_DURATION) {
             throw new IllegalArgumentException("Wrong animation duration argument. Duration must be within " +

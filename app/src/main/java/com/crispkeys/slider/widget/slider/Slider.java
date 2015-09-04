@@ -163,8 +163,8 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
                 // the touch slop, start the scroll
 
                 // left as an exercise for the reader
-                final float xDiff = calculateDistanceX(ev);
-                float yDiff = calculateDistanceY(ev);
+                final float xDiff = getDiffX(ev);
+                float yDiff = getDiffY(ev);
                 // Touch slop should be calculated using ViewConfiguration
                 // constants.
                 if (xDiff > mTouchSlop && xDiff * 0.5f > yDiff) {
@@ -193,11 +193,11 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         return false;
     }
 
-    private float calculateDistanceY(MotionEvent ev) {
+    private float getDiffY(MotionEvent ev) {
         return ev.getY() - mInitialY;
     }
 
-    protected float calculateDistanceX(MotionEvent ev) {
+    private float getDiffX(MotionEvent ev) {
         return ev.getX() - mInitialX;
     }
 
@@ -207,8 +207,6 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
         // scroll this container).
         // This method will only be called if the touch event was intercepted in
         // onInterceptTouchEvent
-
-        int w = getWidth();
 
         float x = ev.getX();
         float y = ev.getY();
@@ -224,8 +222,8 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
 
             case MotionEvent.ACTION_MOVE:
                 //TODO это поле в дальнейшим должен возврашать отрецательный число если свапнулся назад
-                float xDiff = Math.abs(x - mInitialX);
-                float yDiff = Math.abs(y - mInitialY);
+                float xDiff = Math.abs(getDiffX(ev));
+                float yDiff = Math.abs(getDiffY(ev));
 
                 //TODO тут анимашка должна начатся с нулья а не с 1
                 float animValue = 1 - Math.min(xDiff / mSwipeLength, 1.0f);
@@ -249,11 +247,22 @@ public class Slider extends FrameLayout implements AnimationManager.SliderAnimat
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                xDiff = Math.abs(x - mInitialX);
+                xDiff = getDiffX(ev);
 
                 animValue = 1 - Math.min(xDiff / mSwipeLength, 1.0f);
 
-                //if(animValue)
+                if(animValue ==0 ||animValue==1){
+                    return true;
+                }
+
+                if (xDiff >= mSwipeScrollBackLength){
+                    mAnimationManager.startAnimation(currentView, animValue);
+                }else if (xDiff < mSwipeScrollBackLength && xDiff > -mSwipeScrollBackLength){
+
+                }
+                //else{
+                //    //TODO Implement srollback logic here
+                //}
 
                 break;
         }
