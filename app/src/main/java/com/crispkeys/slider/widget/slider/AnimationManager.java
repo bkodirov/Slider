@@ -5,7 +5,6 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.view.animation.LinearInterpolator;
 import java.math.BigDecimal;
-import timber.log.Timber;
 
 class AnimationManager {
     private static final long MAX_ANIMATION_DURATION = 70000;
@@ -45,7 +44,7 @@ class AnimationManager {
                 if (mSliderAnimatorListener != null && !isReversed) {
                     mSliderAnimatorListener.onSlideAnimationStart();
                 }
-                Timber.d("onAnimationStart "+animation.hashCode());
+                //Timber.d("onAnimationStart "+animation.hashCode());
             }
 
             @Override
@@ -53,7 +52,7 @@ class AnimationManager {
                 if (mSliderAnimatorListener != null && !isReversed) {
                     mSliderAnimatorListener.onSlideAnimationEnd();
                 }
-                Timber.d("onSlideAnimationEnd "+animation.hashCode());
+                //Timber.d("onSlideAnimationEnd "+animation.hashCode());
             }
 
             @Override
@@ -61,7 +60,7 @@ class AnimationManager {
                 if (mSliderAnimatorListener != null && !isReversed) {
                     mSliderAnimatorListener.onSlideAnimationCancel();
                 }
-                Timber.d("onAnimationCancel "+animation.hashCode());
+                //Timber.d("onAnimationCancel "+animation.hashCode());
             }
 
             @Override
@@ -89,7 +88,7 @@ class AnimationManager {
             mValueAnimator.removeAllListeners();
             mValueAnimator.cancel();
             mValueAnimator = null;
-            Timber.e("Animation stopped");
+            //Timber.e("Animation stopped");
         } else {
              throw new IllegalStateException("Animation not started yet");
         }
@@ -98,7 +97,7 @@ class AnimationManager {
     }
 
     void onSwipe(AnimatableLayout animatableLayout, float animValue) {
-        Timber.d("onSwipe(): %.3f", animValue);
+        //Timber.d("onSwipe(): %.3f", animValue);
         if (animValue >= 1.0f) {
             if (mSliderAnimatorListener != null) {
                 mSliderAnimatorListener.onSlideAnimationEnd();

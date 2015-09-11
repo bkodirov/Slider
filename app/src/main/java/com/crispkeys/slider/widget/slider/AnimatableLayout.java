@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import java.lang.ref.WeakReference;
+import timber.log.Timber;
 
 public class AnimatableLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener {
 
@@ -92,10 +93,14 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         }
 
         if (mBufferBitmap == null) {
+            //setDrawingCacheEnabled(true);
+            //mView.getDrawingCache();
+            long timer = System.currentTimeMillis();
+
             mBufferBitmap = new WeakReference<>(Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(),
                 Bitmap.Config.ARGB_8888));
             mBufferCanvas = new Canvas(mBufferBitmap.get());
-            //Timber.e("Created new Bitmap");
+            Timber.e("Created new Bitmap, time: %s", System.currentTimeMillis()-timer);
         }
 
         mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);

@@ -257,7 +257,7 @@ if(mState == State.SCROLL_END){
                 if(animValue >=1.0f){
                     mState = State.SCROLL_END;
                 }
-                Timber.d("MOVE: animValue = %.3f, diffX %.2f", animValue, getDiffX(ev));
+                //Timber.d("MOVE: animValue = %.3f, diffX %.2f", animValue, getDiffX(ev));
                 if (mState == State.SCROLL || mState == State.SCROLL_END) {
                     //// TODO: 9/8/15  Temporary. Just in order to prevent back swiping
                     if (getDiffX(ev) < 0 && animationValueWhenInterruped == 0) {
