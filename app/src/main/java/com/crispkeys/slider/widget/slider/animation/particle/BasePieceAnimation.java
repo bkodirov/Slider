@@ -2,7 +2,6 @@ package com.crispkeys.slider.widget.slider.animation.particle;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
 import com.crispkeys.slider.widget.slider.OnViewOutingAnimationListener;
 import com.crispkeys.slider.widget.slider.animation.pice.BasePiece;
 
@@ -15,6 +14,7 @@ public abstract class BasePieceAnimation implements OnViewOutingAnimationListene
 
     @Override
     public void onViewOuting(Canvas canvas, Bitmap bitmap, float value) {
+        //Timber.d("Value:  %.2f", value);
         if (mPieces == null)
             mPieces = preparePieces(canvas.getWidth(), canvas.getHeight());
         for (BasePiece piece: mPieces)

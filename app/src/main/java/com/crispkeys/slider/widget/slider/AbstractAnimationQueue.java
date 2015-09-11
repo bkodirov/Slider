@@ -1,6 +1,4 @@
-package com.crispkeys.slider;
-
-import com.crispkeys.slider.widget.slider.OnViewOutingAnimationListener;
+package com.crispkeys.slider.widget.slider;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -13,7 +11,7 @@ public abstract class AbstractAnimationQueue<T extends OnViewOutingAnimationList
 
     private Queue<Class<? extends T>> mAnimationQueue = new LinkedList<>();
 
-    public AbstractAnimationQueue(){
+    public AbstractAnimationQueue() {
     }
 
     public abstract Class<? extends T> getNextAnimation();

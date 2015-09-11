@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import java.lang.ref.WeakReference;
-import timber.log.Timber;
 
 public class AnimatableLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener {
 
@@ -33,12 +32,12 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     public static AnimatableLayout newInstance(Context context,
         OnViewOutingAnimationListener onViewOutingAnimationListener, View childView) {
-        Timber.d("newInstance create started");
+        //Timber.d("newInstance create started");
 
         AnimatableLayout view = new AnimatableLayout(context);
         view.onViewOutingAnimationListener = onViewOutingAnimationListener;
         view.addView(childView);
-        Timber.d("newInstance create end");
+        //Timber.d("newInstance create end");
         return view;
     }
 
@@ -47,7 +46,7 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
     }
 
     public void setAnimatedValue(float animationValue) {
-        //Timber.d("Animated Value: " +animationValue);
+        //Timber.d("Animation value: %.3f", animationValue);
         mAnimatedValue = animationValue;
         invalidate();
     }
@@ -93,9 +92,10 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
         }
 
         if (mBufferBitmap == null) {
-            mBufferBitmap = new WeakReference<>(Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888));
+            mBufferBitmap = new WeakReference<>(Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(),
+                Bitmap.Config.ARGB_8888));
             mBufferCanvas = new Canvas(mBufferBitmap.get());
-            Timber.e("Created new Bitmap");
+            //Timber.e("Created new Bitmap");
         }
 
         mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -106,7 +106,7 @@ public class AnimatableLayout extends ViewGroup implements ValueAnimator.Animato
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        setAnimatedValue((Float) animation.getAnimatedValue());
+        onAnimationUpdate((Float) animation.getAnimatedValue());
     }
     public void onAnimationUpdate(float value){
         setAnimatedValue(value);
